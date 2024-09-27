@@ -7,6 +7,7 @@ output:
     df_print: paged
 ---
 ```{r, packages}
+library(cars)
 library(tidyverse)
 library(reshape2)
 ```
@@ -24,7 +25,6 @@ df$dur <- as.numeric(gsub(",","",df$dur))
 df <- as_tibble(df) %>% dplyr::select(-added)
 summary(df)
 glimpse(df)
-df %>% filter(bpm < 10)
 ```
 
 # data exploration
@@ -45,76 +45,16 @@ ggplot(dfmelty, aes_string(x = "value", y = var)) + geom_point(shape = ".") + fa
 lapply(numlabs, plots)
 ```
 
-```{r}
-ggplot(dfmelty) +
-geom_jitter(aes(value,live, colour=variable),) +
-geom_smooth(aes(value,live, colour=variable), method=lm, se=FALSE) +
-facet_wrap(~variable, scales="free_x")
-
-dfmelty <- melt(df.1[,1:10], id.vars = 'nrgy')
-
-ggplot(dfmelty) +
-geom_jitter(aes(value,nrgy, colour=variable),) +
-geom_smooth(aes(value,nrgy, colour=variable), method=lm, se=FALSE) +
-facet_wrap(~variable, scales="free_x")
-
-dfmelty <- melt(df.1[,1:10], id.vars = 'acous')
-
-ggplot(dfmelty) +
-geom_jitter(aes(value,acous, colour=variable),) +
-geom_smooth(aes(value,acous, colour=variable), method=lm, se=FALSE) +
-facet_wrap(~variable, scales="free_x")
-
-dfmelty <- melt(df.1[,1:10], id.vars = 'spch')
-
-ggplot(dfmelty) +
-geom_jitter(aes(value,spch, colour=variable),) +
-geom_smooth(aes(value,spch, colour=variable), method=lm, se=FALSE) +
-facet_wrap(~variable, scales="free_x")
-
-dfmelty <- melt(df.1[,1:10], id.vars = 'dB')
-
-ggplot(dfmelty) +
-geom_jitter(aes(value,dB, colour=variable),) +
-geom_smooth(aes(value,dB, colour=variable), method=lm, se=FALSE) +
-facet_wrap(~variable, scales="free_x")
-
-dfmelty <- melt(df.1[,1:10], id.vars = 'bpm')
-
-ggplot(dfmelty) +
-geom_jitter(aes(value,bpm, colour=variable),) +
-geom_smooth(aes(value,bpm, colour=variable), method=lm, se=FALSE) +
-facet_wrap(~variable, scales="free_x")
-
-dfmelty <- melt(df.1[,1:10], id.vars = 'year')
-
-ggplot(dfmelty) +
-geom_jitter(aes(value, year, colour=variable),) +
-geom_smooth(aes(value, year, colour=variable), method=lm, se=FALSE) +
-facet_wrap(~variable, scales="free_x")
-
-dfmelty <- melt(df.1[,1:10], id.vars = 'dnce')
-
-ggplot(dfmelty) +
-geom_jitter(aes(value, dnce, colour=variable),) +
-geom_smooth(aes(value, dnce, colour=variable), method=lm, se=FALSE) +
-facet_wrap(~variable, scales="free_x")
-
-dfmelty <- melt(df.1[,1:10], id.vars = 'val')
-
-ggplot(dfmelty) +
-geom_jitter(aes(value, val, colour=variable),) +
-geom_smooth(aes(value, val, colour=variable), method=lm, se=FALSE) +
-facet_wrap(~variable, scales="free_x")
-```
-
-
-
 # initial fitting
 ```{r}
-fit.1 <- lm(nrgy~., data = df.1)
+fit.1 <- lm(nrgy ~ year + bpm + dnce + dB + live + val + dur + acous + spch + pop, data = df)
 summary(fit.1)
+```
 
+# feature selection
+```{r}
+vif(fit.1)
+```
 ```
 
 # feature selection
